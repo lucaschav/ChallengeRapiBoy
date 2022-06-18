@@ -29,7 +29,7 @@ namespace Challenge.web.Controllers
         {
             var result = await _usuarioService.GetUsuarios(User.Claims.Where(c => c.Type == "token").First().Value);
 
-            if (!mostrarTodo)
+            if (!mostrarTodo || (mostrarTodo && User.IsInRole("cliente")))
                 result = result.Where(x => x.Rol.Nombre == "cliente").ToList();
 
             return View(result);
