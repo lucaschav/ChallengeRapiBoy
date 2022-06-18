@@ -1,0 +1,53 @@
+﻿@model Challenge.shared.RequestModels.LoginRequest
+@{
+    Layout = null;
+}
+<head>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-8">
+            <img src="https://source.unsplash.com/random"
+                 alt="Login image" class="w-100 vh-100" style="object-fit: cover; object-position: left;">
+        </div>
+        <div class="col-xl-4">
+            <div class="row justify-content-center mt-5">
+                <div class="col-10">
+                    <main class="form-signin w-100 m-auto">
+                        <form asp-action="Login" asp-controller="Account" method="post">
+                            <div class="row justify-content-center">
+                                <div class="col-3">
+
+                                    <img class="mb-4" src="Images/login.png" alt="" width="120" height="110" />
+                                </div>
+                            </div>
+                            <h1 class="h3 mb-3 fw-normal">Iniciar Sesión</h1>
+                            <span asp-validation-for="Email" class="text-danger mt-2"></span>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                            @if (ViewBag.error != null)
+                            {
+                                <span class="text-danger">@ViewBag.error</span>
+                            }
+
+                            <div class="form-floating">
+                                <input type="email" asp-for="Email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                                <label for="floatingInput">Email</label>
+                            </div>
+                            <div class="form-floating">
+                                <input type="password" asp-for="Password" class="form-control" id="floatingPassword" placeholder="Contraseña">
+                                <label for="floatingPassword">Contraseña</label>
+                            </div>
+                            <button class="w-100 btn btn-lg btn-primary" type="submit">Iniciar Sesión</button>
+                            <p class="mt-5 mb-3 text-muted">&copy; 2017–2022</p>
+                        </form>
+                    </main>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+

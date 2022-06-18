@@ -1,0 +1,67 @@
+﻿@model Shared.shared.Dtos.UsuarioDto
+
+@{
+    var x = TempData["error"];
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-xl-8 border m-4 p-4">
+            <div class="row text-center mt-4 mb-4">
+                <p><strong>@(Model.Id == 0 ? "Crear nuevo usuario" : "Editar usuario")</strong></p>
+            </div>
+            @if (x != null)
+            {
+                <div class="row text-center mt-4 mb-4">
+                    <p class="text-danger">@x</p>
+                </div>
+            }
+            <form asp-action="_CreateOrEdit" asp-controller="Home" method="post" asp-route-usuarioId="@Model.Id">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <label class="form-label">Correo Electronico</label>
+                        <input type="email" class="form-control" asp-for="Email" placeholder="name@example.com" />
+                        <span class="text-danger" asp-validation-for="Email"></span>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-xl-6">
+                        <label class="form-label">Contraseña</label>
+                        @if (Model.Id == 0)
+                        {
+                            <input type="password" class="form-control" asp-for="PasswordString" required minlength="5" />
+                        }
+                        else
+                        {
+                            <input type="password" class="form-control" asp-for="PasswordString" placeholder="Dejar en blanco para que permanzeca la actual"/>
+                        }
+                        <span class="text-danger" asp-validation-for="PasswordString"></span>
+                    </div>
+                    <div class="col-xl-6">
+                        <label class="form-label">Confirmar Contraseña</label>
+                        <input type="password" class="form-control" asp-for="ConfirmPassword" />
+                        <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-xl-6">
+                        <label class="form-label">Rol</label>
+                        <select class="form-select" asp-for="RolId" asp-items="@ViewBag.RolesLst"></select>
+                    </div>
+                    <div class="col-xl-6">
+                        <label class="form-label">Estado</label>
+                        <select class="form-select" asp-for="Activo">
+                            <option value="true">Activo</option>
+                            <option value="false">Desactivado</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-xl-12">
+                        <button class="btn btn-primary w-100" type="submit">@(Model.Id == 0 ? "Crear Usuario" : "Actualizar Datos")</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
