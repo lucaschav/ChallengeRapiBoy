@@ -16,7 +16,7 @@
                     <p class="text-danger">@x</p>
                 </div>
             }
-            <form asp-action="_CreateOrEdit" asp-controller="Home" method="post" asp-route-usuarioId="@Model.Id">
+            <form asp-action="_CreateOrEdit" asp-controller="Home" method="post" asp-route-usuarioId="@Model.Id" id="formulario" onsubmit="return PostCreateOrEdit(this)">
                 <div class="row">
                     <div class="col-xl-12">
                         <label class="form-label">Correo Electronico</label>
@@ -65,3 +65,28 @@
         </div>
     </div>
 </div>
+<script>
+
+    function PostCreateOrEdit(form){
+        debugger
+        event.preventDefault();
+        let formdata = new FormData(form);
+
+        $.ajax({
+                type: 'POST',
+                url: form.action,
+                data: formdata,
+                contentType: false,
+                processData: false,
+                success: function(data){
+                    if(data.result == false){
+                        alertify.error(data.errorMsg);
+                    }
+                    else{
+                        location.href = '@Url.Action("Index", "Home")'
+                    }
+                }
+            });
+    }
+
+</script>

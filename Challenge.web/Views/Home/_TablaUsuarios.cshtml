@@ -1,0 +1,100 @@
+﻿@model IEnumerable<Shared.shared.Dtos.UsuarioDto>
+@{
+}
+<div class="row justify-content-center">
+    <div class="col-md-8 mb-4">
+        @if (Model.Where(x => x.Rol.Nombre != "cliente").Any())
+        {
+            <p class="h4">Lista de Usuarios Totales</p>
+        }
+        else
+        {
+            <p class="h4">Lista de Usuarios con rol Cliente</p>
+        }
+    </div>
+</div>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <table id="example" class="table table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Correo Electronico</th>
+                    <th>Contraseña</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    @if (item.Email != User.Identity.Name)
+                    {
+                        <tr id="Fila@(item.Id)">
+                            <td id="mail@(item.Id)">@item.Email</td>
+                            <td>*********</td>
+                            <td>@item.Rol.Nombre</td>
+                            <td>
+                                @if (User.IsInRole("admin"))
+                                {
+                                    <input type="checkbox" onchange="return ChangeCheck('@item.Id', '@item.Email', '@item.RolId')" id="check@(item.Id)" class="form-check-input" value="" checked="@item.Activo" />
+                                }
+                                else
+                                {
+                                    <input type="checkbox" disabled id="check@(item.Id)" class="form-check-input" value="" checked="@item.Activo" />
+                                }
+                            </td>
+                            <td>
+                                @if (User.IsInRole("admin"))
+                                {
+                                    <a class="btn btn-primary" title="Editar" onclick="EditarUsuario('@item.Id', '@item.Email', '@item.RolId')"><i class="fas fa-pen"></i></a>
+                                    <a class="btn btn-danger" onclick="DeleteUser('@item.Id', '@item.Email')" title="Eliminar"><i class="fas fa-eraser"></i></a>
+                                }
+                                else
+                                {
+                                    <p>El rango de su cuenta no posee acceso las acciones</p>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@section scripts{
+<script>
+
+    $(document).ready(function () {
+
+
+        $('#example').DataTable({
+            "language": {
+                "sProcessing":    "Procesando...",
+                "sLengthMenu":    "Mostrar _MENU_ registros",
+                "sZeroRecords":   "No se encontraron resultados",
+                "sEmptyTable":    "Ningún dato disponible en esta tabla",
+                "sInfo":          "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty":     "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered":  "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix":   "",
+                "sSearch":        "Buscar:",
+                "sUrl":           "",
+                "sInfoThousands":  ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst":    "Primero",
+                    "sLast":    "Último",
+                    "sNext":    "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+        }
+    }
+        });
+    });
+
+</script>
+}

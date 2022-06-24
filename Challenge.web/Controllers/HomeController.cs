@@ -27,16 +27,13 @@ namespace Challenge.web.Controllers
 
         public async Task<IActionResult> Index(bool mostrarTodo = false)
         {
-            var result = await _usuarioService.GetUsuarios(User.Claims.Where(c => c.Type == "token").First().Value);
-
-            if (!mostrarTodo || (mostrarTodo && User.IsInRole("cliente")))
-                result = result.Where(x => x.Rol.Nombre == "cliente").ToList();
-
-            return View(result);
+            if(mostrarTodo)
+                TempData["mostrarTodo"] = mostrarTodo;
+            return View();
         }
 
         [HttpGet]
-        public async Task<IActionResult> CreateOrEdit(int usuarioId, string email, int rolId, bool estado)
+        public async Task<IActionResult> _CreateOrEdit(int usuarioId, string email, int rolId, bool estado)
         {
             UsuarioDto usuarioDto = new UsuarioDto();
 
@@ -52,12 +49,12 @@ namespace Challenge.web.Controllers
 
             ViewBag.rolesLst = new SelectList(roles, nameof(RolDto.Id), nameof(RolDto.Nombre));
 
-            return View(usuarioDto);
+            return PartialView(usuarioDto);
 
         }
 
         [HttpPost]
-        public async Task<IActionResult> _CreateOrEdit(int usuarioId, UsuarioDto usuarioDto)
+        public async Task<JsonResult> _CreateOrEdit(int usuarioId, UsuarioDto usuarioDto)
         {
             try
             {
@@ -72,9 +69,7 @@ namespace Challenge.web.Controllers
                             modelErrors.Add(modelError.ErrorMessage);
                         }
                     }
-                    TempData["error"] = modelErrors.First();
-                    string pathParameter = Url.Action("CreateOrEdit") + $"/?usuarioId={usuarioId}&email={usuarioDto.Email}&rolId={usuarioDto.RolId}&estado={usuarioDto.Activo}";
-                    return Redirect(pathParameter);
+                    return Json(new {result = false, errorMsg = modelErrors.First()});
                 }
 
                 if (usuarioId == 0)
@@ -98,13 +93,11 @@ namespace Challenge.web.Controllers
                     TempData["createOrEdit"] = "update";
                 }
 
-                return RedirectToAction("Index");
+                return Json(new { result = true });
             }
             catch (Exception ex)
             {
-                TempData["error"] = ex.Message;
-                string pathParameter = Url.Action("CreateOrEdit") + $"/?usuarioId={usuarioId}&email={usuarioDto.Email}&rolId={usuarioDto.RolId}&estado={usuarioDto.Activo}";
-                return Redirect(pathParameter);
+                return Json(new { result = false, errorMsg = ex.Message });
             }
         }
 
@@ -128,6 +121,18 @@ namespace Challenge.web.Controllers
             }, User.Claims.Where(c => c.Type == "token").First().Value);
 
             return Json(new { result = result });
+        }
+
+        public async Task<IActionResult> _TablaUsuarios()
+        {
+            bool mostrarTodo = TempData["mostrarTodo"] != null ? true : false;
+
+            var result = await _usuarioService.GetUsuarios(User.Claims.Where(c => c.Type == "token").First().Value);
+
+            if (!mostrarTodo || (mostrarTodo && User.IsInRole("cliente")))
+                result = result.Where(x => x.Rol.Nombre == "cliente").ToList();
+
+            return PartialView(result);
         }
 
         public IActionResult Privacy()
